@@ -35,14 +35,16 @@ class AggregatedReportingMigrations < ActiveRecord::Migration
   def up
     migration_names = OpenProject::Plugins::MigrationMapping.migration_files_to_migration_names(MIGRATION_FILES, OLD_PLUGIN_NAME)
     Migration::MigrationSquasher.squash(migration_names) do
-      create_table "cost_queries" do |t|
-        t.integer  "user_id",                                       :null => false
-        t.integer  "project_id"
-        t.string   "name",                                          :null => false
-        t.boolean  "is_public",                  :default => false, :null => false
-        t.datetime "created_on",                                    :null => false
-        t.datetime "updated_on",                                    :null => false
-        t.string   "serialized", :limit => 2000,                    :null => false
+      if !table_exists?("cost_queries")
+        create_table "cost_queries" do |t|
+          t.integer  "user_id",                                       :null => false
+          t.integer  "project_id"
+          t.string   "name",                                          :null => false
+          t.boolean  "is_public",                  :default => false, :null => false
+          t.datetime "created_on",                                    :null => false
+          t.datetime "updated_on",                                    :null => false
+          t.string   "serialized", :limit => 2000,                    :null => false
+        end
       end
 
       add_timestamps :custom_fields
